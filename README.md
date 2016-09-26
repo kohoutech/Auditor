@@ -1,2 +1,2 @@
-# Audion
-an audio processor plugin editor
+# Auditor
+an audio plugin host
