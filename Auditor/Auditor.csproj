@@ -89,6 +89,9 @@
     <Compile Include="UI\WaveDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Wave\IWaveView.cs" />
+    <Compile Include="Wave\System\WaveDevices.cs" />
+    <Compile Include="Wave\Waverly.cs" />
     <EmbeddedResource Include="AuditorWindow.resx">
       <DependentUpon>AuditorWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -129,9 +132,35 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Wave\Waverly.vcxproj" />
+    <None Include="Wave\Waverly.vcxproj.filters" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon1.ico" />
+    <Content Include="Wave\Engine\AudioData.cpp" />
+    <Content Include="Wave\Engine\AudioData.h" />
+    <Content Include="Wave\Engine\Transport.cpp" />
+    <Content Include="Wave\Engine\Transport.h" />
+    <Content Include="Wave\File\AudioFile.cpp" />
+    <Content Include="Wave\File\AudioFile.h" />
+    <Content Include="Wave\Multitrack\archive\WaveOutDevice.cpp" />
+    <Content Include="Wave\Multitrack\archive\WaveOutDevice.h" />
+    <Content Include="Wave\Multitrack\Recorder.cpp" />
+    <Content Include="Wave\Multitrack\Recorder.h" />
+    <Content Include="Wave\Multitrack\Track.cpp" />
+    <Content Include="Wave\Multitrack\Track.h" />
+    <Content Include="Wave\System\WaveBuffer.cpp" />
+    <Content Include="Wave\System\WaveBuffer.h" />
+    <Content Include="Wave\System\WaveInDevice.cpp" />
+    <Content Include="Wave\System\WaveInDevice.h" />
+    <Content Include="Wave\System\WaveOutDevice.cpp" />
+    <Content Include="Wave\System\WaveOutDevice.h" />
+    <Content Include="Wave\Waverly.cpp" />
+    <Content Include="Wave\Waverly.h" />
+    <Content Include="Wave\Waverly.vcxproj.user" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Wave\VST\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

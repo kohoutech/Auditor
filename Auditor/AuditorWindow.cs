@@ -336,7 +336,7 @@ namespace AuditorA
 
         private void aboutHelpMenuItem_Click(object sender, EventArgs e)
         {
-            String msg = "Auditor\nversion 1.0.0\n" + "\xA9 Transonic Software 2007-2017\n" + "http://transonic.kohoutech.com";
+            String msg = "Auditor\nversion 1.0.1\n" + "\xA9 Transonic Software 2007-2017\n" + "http://transonic.kohoutech.com";
             MessageBox.Show(msg, "About");
 
         }
