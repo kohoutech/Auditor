@@ -27,7 +27,7 @@ using System.Text;
 using System.Windows.Forms;
 using AuditorA.Engine;
 
-namespace AuditorA.UI
+namespace Auditor.UI
 {
     public partial class PluginInfoWnd : Form
     {

@@ -365,3 +365,5 @@ namespace Transonic.MIDI.System
     public IntPtr[] reservedArray;
     }
 }
+
+//  Console.WriteLine(" there's no sun in the shadow of the wizard");

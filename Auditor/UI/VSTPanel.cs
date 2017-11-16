@@ -25,21 +25,24 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using AuditorA;
-using AuditorA.Engine;
 
-namespace AuditorA.UI
+using Auditor;
+using Auditor.Engine;
+
+using Transonic.Wave.VST;
+
+namespace Auditor.UI
 {
     public class VSTPanel : UserControl
     {
         public VSTRack rack;                //container
         public AuditorWindow auditwin;      //container's container
+
+        public VSTPlugin plugin;
         public int plugNum;
         public String plugPath;
         public String fileName;
         public String plugName;
-
-        public VSTPlugin plugin;
         
         public const int PANELHEIGHT = 75;
         public const int PANELWIDTH = 400;
@@ -57,8 +60,6 @@ namespace AuditorA.UI
         private System.ComponentModel.IContainer components;
         
         public String panelLetters = "ABCD";
-        public Brush darkLED;
-        public Brush brightLED;
 
         public bool isCurrent;
 
@@ -74,6 +75,7 @@ namespace AuditorA.UI
 
             rack = _rack;
             auditwin = rack.auditwin;
+
             plugNum = _plugNum;
             plugName = "plugin " + panelLetters[plugNum];
             plugPath = null;
@@ -82,84 +84,10 @@ namespace AuditorA.UI
 
             this.Size = new Size(PANELWIDTH, PANELHEIGHT);
             this.lblPanelLetter.Text = "" + panelLetters[plugNum];
-            this.darkLED = new SolidBrush(Color.FromArgb(0x40, 0, 0));
-            this.brightLED = new SolidBrush(Color.FromArgb(0xff, 0, 0));
 
             isCurrent = false;
-
             editorWindow = null;
         }
-
-        public bool loadPlugin(String _plugPath)
-        {
-            plugPath = _plugPath;
-            fileName = Path.GetFileNameWithoutExtension(plugPath);
-            plugin = new VSTPlugin(this, auditwin.auditorA, plugNum, plugPath);
-            bool result = plugin.load();
-            if (result)
-            {
-                plugName = (plugin.name.Length > 0) ? plugin.name : fileName;
-                //if (plugNum == 2) plugName = "Another VST";
-                //if (plugNum == 3) plugName = "Yet Another VST";
-                lblPlugName.Text = plugName;
-                editorWindowSize = new Size(plugin.editorWidth, plugin.editorHeight);
-                cbxProgList.DataSource = plugin.programs;
-            }
-            return result;
-        }
-
-        public void shutDownPlugin()
-        {
-            if (editorWindow != null) editorWindow.Close();
-        }
-
-        public void setCurrentPlugin() 
-        {
-            plugin.setCurrent();
-            isCurrent = true;
-            Invalidate();
-        }
-
-        public void clearCurrentPlugin()
-        {
-            isCurrent = false;
-            Invalidate();
-        }
-
-//- painting ------------------------------------------------------------------
-
-        void drawRackScrew(Graphics g, int xpos, int ypos) 
-        {
-            g.DrawEllipse(Pens.Black, xpos, ypos, 10, 10);
-            g.FillEllipse(Brushes.Gray, xpos, ypos, 10, 10);
-            Pen slotPen = new Pen(Color.Black, 2);
-            g.DrawLine(slotPen, xpos + 5, ypos, xpos + 5, ypos + 10);
-            g.DrawLine(slotPen, xpos, ypos+5, xpos + 10, ypos+5);
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-            Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-
-            //beveled edge
-            g.DrawLine(Pens.SteelBlue, 1, PANELHEIGHT - 3, PANELWIDTH - 1, PANELHEIGHT - 3);        //bottom
-            g.DrawLine(Pens.SteelBlue, PANELWIDTH - 3, 1, PANELWIDTH - 3, PANELHEIGHT - 1);           //right
-
-            //rack screws
-            drawRackScrew(g, 5, 10);
-            drawRackScrew(g, 5, 55);
-            drawRackScrew(g, 385, 10);
-            drawRackScrew(g, 385, 55);            
-            
-            //running LED
-            g.FillEllipse((isCurrent ? brightLED : darkLED), 34, 12, 16, 16);
-            g.DrawEllipse(Pens.White, 34, 12, 16, 16);
-            
-        }
-
-//- design time code ----------------------------------------------------------
 
         private void InitializeComponent()
         {
@@ -293,6 +221,79 @@ namespace AuditorA.UI
             this.ResumeLayout(false);
             this.PerformLayout();
 
+        }
+
+//-----------------------------------------------------------------------------
+
+        public bool loadPlugin(String _plugPath)
+        {
+            plugPath = _plugPath;
+            fileName = Path.GetFileNameWithoutExtension(plugPath);
+            plugin = new VSTPlugin(this, auditwin.waverly, plugNum, plugPath);
+            bool result = plugin.load();
+            if (result)
+            {
+                plugName = (plugin.name.Length > 0) ? plugin.name : fileName;
+                //if (plugNum == 2) plugName = "Another VST";
+                //if (plugNum == 3) plugName = "Yet Another VST";
+                lblPlugName.Text = plugName;
+                editorWindowSize = new Size(plugin.editorWidth, plugin.editorHeight);
+                cbxProgList.DataSource = plugin.programs;
+            }
+            return result;
+        }
+
+        public void shutDownPlugin()
+        {
+            if (editorWindow != null) editorWindow.Close();
+        }
+
+        public void setCurrentPlugin() 
+        {
+            plugin.setCurrent();
+            isCurrent = true;
+            Invalidate();
+        }
+
+        public void clearCurrentPlugin()
+        {
+            isCurrent = false;
+            Invalidate();
+        }
+
+//- painting ------------------------------------------------------------------
+
+        void drawRackScrew(Graphics g, int xpos, int ypos) 
+        {
+            g.DrawEllipse(Pens.Black, xpos, ypos, 10, 10);
+            g.FillEllipse(Brushes.Gray, xpos, ypos, 10, 10);
+            Pen slotPen = new Pen(Color.Black, 2);
+            g.DrawLine(slotPen, xpos + 5, ypos, xpos + 5, ypos + 10);
+            g.DrawLine(slotPen, xpos, ypos+5, xpos + 10, ypos+5);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            //beveled edge
+            g.DrawLine(Pens.SteelBlue, 1, PANELHEIGHT - 3, PANELWIDTH - 1, PANELHEIGHT - 3);        //bottom
+            g.DrawLine(Pens.SteelBlue, PANELWIDTH - 3, 1, PANELWIDTH - 3, PANELHEIGHT - 1);         //right
+
+            //rack screws
+            drawRackScrew(g, 5, 10);
+            drawRackScrew(g, 5, 55);
+            drawRackScrew(g, 385, 10);
+            drawRackScrew(g, 385, 55);            
+            
+            //running LED
+            Color LEDColor =  isCurrent ? Color.FromArgb(0xff, 0, 0) : Color.FromArgb(0x40, 0, 0);
+            Brush LEDBrush = new SolidBrush(LEDColor);
+            g.FillEllipse(LEDBrush, 34, 12, 16, 16);
+            g.DrawEllipse(Pens.White, 34, 12, 16, 16);
+            LEDBrush.Dispose();            
         }
 
 //- event handlers ------------------------------------------------------------

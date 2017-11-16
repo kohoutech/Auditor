@@ -24,7 +24,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using AuditorA.UI;
 
-namespace AuditorA.Engine
+namespace Transonic.Wave.VST
 {
     public class VSTPlugin
     {

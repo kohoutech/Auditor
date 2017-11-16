@@ -25,7 +25,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using AuditorA.Engine;
 
-namespace AuditorA.UI
+namespace Auditor.UI
 {
     public class ParamEditor : Form
     {

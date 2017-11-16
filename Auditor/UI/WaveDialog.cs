@@ -23,7 +23,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace AuditorA.UI
+namespace Auditor.UI
 {
     class WaveDialog : Form
     {

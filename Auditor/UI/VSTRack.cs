@@ -25,37 +25,36 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace AuditorA.UI
+namespace Auditor.UI
 {
     public class VSTRack : Control
     {
-
         public AuditorWindow auditwin;
-        public VSTPanel[] panels;
-        public Rectangle leftRail;
-        public Rectangle rightRail;
+
         public const int UNITCOUNT = 4;
-        public const int RAILWIDTH = 20;
+        public VSTPanel[] panels;
+        public int currentPlugin;
+
         int rackWidth;
         int rackHeight;
-
-        public int currentPlugin;
+        public Rectangle leftRail;
+        public Rectangle rightRail;
+        public const int RAILWIDTH = 20;
 
         //cons
         public VSTRack(AuditorWindow _auditwin)
         {
             auditwin = _auditwin;
+
             rackWidth = VSTPanel.PANELWIDTH;
             rackHeight = VSTPanel.PANELHEIGHT * UNITCOUNT;
             this.Size = new Size(rackWidth, rackHeight);
             this.BackColor = Color.Black;
-
-            panels = new VSTPanel[UNITCOUNT];
-
             leftRail = new Rectangle(0, 0, RAILWIDTH, rackHeight);
             rightRail = new Rectangle(rackWidth - RAILWIDTH, 0, RAILWIDTH, rackHeight);
 
-            currentPlugin = -1;        //no plugins to select initially
+            panels = new VSTPanel[UNITCOUNT];
+            currentPlugin = -1;                     //no plugins to select initially
         }
 
 //- panel management ----------------------------------------------------------
@@ -115,8 +114,11 @@ namespace AuditorA.UI
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
+            //rails
             g.FillRectangle(Brushes.DarkGray, leftRail);
             g.FillRectangle(Brushes.DarkGray, rightRail);
+
+            //screw holes
             for (int i = 0; i < UNITCOUNT; i++)
             {
                 int rackofs = i * VSTPanel.PANELHEIGHT;

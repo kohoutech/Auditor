@@ -8,7 +8,7 @@
     <ProjectGuid>{D421B687-4D6A-4184-AC1B-93FB2864E404}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AuditorA</RootNamespace>
+    <RootNamespace>Auditor</RootNamespace>
     <AssemblyName>Auditor</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -52,23 +52,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Auditor.cs" />
     <Compile Include="AuditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="AuditorWindow.Designer.cs">
       <DependentUpon>AuditorWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Engine\MidiInput.cs" />
-    <Compile Include="Engine\MidiSystem.cs" />
-    <Compile Include="Engine\VSTPlugin.cs" />
-    <Compile Include="Engine\WaveSystem.cs" />
+    <Compile Include="Wave\Engine\Transport.cs" />
+    <Compile Include="Wave\File\AudioStream.cs" />
+    <Compile Include="Wave\Multitrack\Recorder.cs" />
+    <Compile Include="Wave\Engine\Channel.cs" />
+    <Compile Include="Wave\VST\VSTPlugin.cs" />
+    <Compile Include="Midi\Engine\MidiTimer.cs" />
+    <Compile Include="Midi\Engine\Transport.cs" />
+    <Compile Include="Midi\Event.cs" />
+    <Compile Include="Midi\Message.cs" />
+    <Compile Include="Midi\MidiFile.cs" />
+    <Compile Include="Midi\Sequence.cs" />
+    <Compile Include="Midi\System\InputDevice.cs" />
+    <Compile Include="Midi\System\MidiSystem.cs" />
+    <Compile Include="Midi\System\OutputDevice.cs" />
+    <Compile Include="Midi\System\SystemUnit.cs" />
+    <Compile Include="Midi\Track.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\MidiDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\KeyboardBar.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\ParamEditor.cs">
@@ -92,6 +100,12 @@
     <Compile Include="Wave\IWaveView.cs" />
     <Compile Include="Wave\System\WaveDevices.cs" />
     <Compile Include="Wave\Waverly.cs" />
+    <Compile Include="Widget\KeyboardBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Widget\Knob.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="AuditorWindow.resx">
       <DependentUpon>AuditorWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -103,12 +117,10 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="UI\MidiDialog.resx">
       <DependentUpon>MidiDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\KeyboardBar.resx">
-      <DependentUpon>KeyboardBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ParamEditor.resx">
       <DependentUpon>ParamEditor.cs</DependentUpon>
@@ -122,7 +134,11 @@
     <EmbeddedResource Include="UI\WaveDialog.resx">
       <DependentUpon>WaveDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Widget\KeyboardBar.resx">
+      <DependentUpon>KeyboardBar.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="ClassDiagram1.cd" />
+    <None Include="Midi\README.md" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -143,8 +159,6 @@
     <Content Include="Wave\Engine\Transport.h" />
     <Content Include="Wave\File\AudioFile.cpp" />
     <Content Include="Wave\File\AudioFile.h" />
-    <Content Include="Wave\Multitrack\archive\WaveOutDevice.cpp" />
-    <Content Include="Wave\Multitrack\archive\WaveOutDevice.h" />
     <Content Include="Wave\Multitrack\Recorder.cpp" />
     <Content Include="Wave\Multitrack\Recorder.h" />
     <Content Include="Wave\Multitrack\Track.cpp" />
@@ -159,10 +173,13 @@
     <Content Include="Wave\Waverly.h" />
     <Content Include="Wave\Waverly.vcxproj.user" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Wave\VST\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if $(ConfigurationName) == Release (
+  $(TargetDir)\release.bat
+)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

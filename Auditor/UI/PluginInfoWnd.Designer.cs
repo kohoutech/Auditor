@@ -1,4 +1,4 @@
-﻿namespace AuditorA.UI
+﻿namespace Auditor.UI
 {
     partial class PluginInfoWnd
     {

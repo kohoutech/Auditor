@@ -1,4 +1,4 @@
-﻿namespace AuditorA
+﻿namespace Auditor
 {
     partial class AuditorWindow
     {

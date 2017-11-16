@@ -25,19 +25,26 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using AuditorA.UI;
 
-namespace AuditorA
+using Auditor.UI;
+using Transonic.Wave;
+using Transonic.Wave.Engine;
+using Transonic.Widget;
+
+namespace Auditor
 {
-    public partial class AuditorWindow : Form
+    public partial class AuditorWindow : Form, IWaveView
     {
-        public Auditor auditorA;
+        public Waverly waverly;
+        public Transport transport;
         public VSTRack rack;
+        KeyboardBar keyboardBar;
+
         public bool[] plugLoaded;
         public ToolStripMenuItem[] plugloadItems;
         public ToolStripMenuItem[] plugselectItems;
         public ToolStripButton[] plugselectButtons;
-        KeyboardBar keyboardBar;
+
         bool isEngineRunning;
         public int waveInDeviceIdx;
         public int waveOutDeviceIdx;
@@ -52,7 +59,8 @@ namespace AuditorA
 
             try
             {
-                auditorA = new Auditor(this);
+                waverly = new Waverly(this);
+                transport = waverly.getTransport();
                 rack = new VSTRack(this);
                 this.Controls.Add(rack);
                 rack.Location = new Point(0, this.AuditMenu.Height + this.AuditToolBar.Height);
@@ -93,7 +101,7 @@ namespace AuditorA
         //save settings & clean up on shut down
         private void AuditorWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            auditorA.shutDown();
+            waverly.shutDown();
         }
 
 //- file menu -----------------------------------------------------------------
@@ -116,6 +124,7 @@ namespace AuditorA
             if (pluginPath.Length == 0) return;
 
             bool result = rack.loadPlugin(plugNum, pluginPath);
+
             if (result)
             {
                 plugLoaded[plugNum] = true;
@@ -134,6 +143,7 @@ namespace AuditorA
         public void unloadPlugin(int plugNum)
         {
             rack.unloadPlugin(plugNum);
+
             plugLoaded[plugNum] = false;
             plugloadItems[plugNum].Text = "Load Plugin " + pluginLetters[plugNum];
             plugselectItems[plugNum].Enabled = false;
@@ -235,13 +245,13 @@ namespace AuditorA
 
         private void startEngineHostMenuItem_Click(object sender, EventArgs e)
         {
-            auditorA.startEngine();
+            transport.play();
             showEngineRunning(true);
         }
 
         private void stopEngineHostMenuItem_Click(object sender, EventArgs e)
         {
-            auditorA.stopEngine();
+            transport.stop();
             showEngineRunning(false); 
         }
 
@@ -260,7 +270,7 @@ namespace AuditorA
 
         private void panicHostMenuItem_Click(object sender, EventArgs e)
         {
-
+            //not implemented yet
         }
 
 //- devices menu -----------------------------------------------------------------
@@ -275,25 +285,25 @@ namespace AuditorA
             {
                 if (isEngineRunning)
                 {
-                    auditorA.stopEngine();
+                    transport.stop();
                     isEngineRunning = false;
                 }
                 waveInDeviceIdx = waveDialog.waveInDeviceIdx;
-                auditorA.setWaveInDevice(waveOutDeviceIdx);
+                waverly.setWaveInDevice(waveOutDeviceIdx);
             }
             if (waveOutDeviceIdx != waveDialog.waveOutDeviceIdx)
             {
                 if (isEngineRunning)
                 {
-                    auditorA.stopEngine();
+                    transport.stop(); 
                     isEngineRunning = false;
                 }
                 waveOutDeviceIdx = waveDialog.waveOutDeviceIdx;
-                auditorA.setWaveOutDevice(waveInDeviceIdx);
+                waverly.setWaveOutDevice(waveInDeviceIdx);
             }
             if (wasEngineRunning && !isEngineRunning)
             {
-                auditorA.startEngine();
+                transport.play();
                 isEngineRunning = true;
             }
         }
@@ -309,25 +319,25 @@ namespace AuditorA
             {
                 if (isEngineRunning)
                 {
-                    auditorA.stopEngine();
+                    transport.stop(); 
                     isEngineRunning = false;
                 }
                 midiInDeviceIdx = midiDialog.midiInDeviceIdx;
-                auditorA.setMidiInDevice(midiInDeviceIdx);
+                waverly.setMidiInDevice(midiInDeviceIdx);
             }
             if (midiOutDeviceIdx != midiDialog.midiOutDeviceIdx)
             {
                 if (isEngineRunning)
                 {
-                    auditorA.stopEngine();
+                    transport.stop(); 
                     isEngineRunning = false;
                 }
                 midiOutDeviceIdx = midiDialog.midiOutDeviceIdx;
-                auditorA.setMidiOutDevice(midiOutDeviceIdx);
+                waverly.setMidiOutDevice(midiOutDeviceIdx);
             }
             if (wasEngineRunning && !isEngineRunning)
             {
-                auditorA.startEngine();
+                transport.play();
                 isEngineRunning = true;
             }
         }
@@ -336,9 +346,8 @@ namespace AuditorA
 
         private void aboutHelpMenuItem_Click(object sender, EventArgs e)
         {
-            String msg = "Auditor\nversion 1.0.1\n" + "\xA9 Transonic Software 2007-2017\n" + "http://transonic.kohoutech.com";
+            String msg = "Auditor\nversion 1.1.0\n" + "\xA9 Transonic Software 2007-2017\n" + "http://transonic.kohoutech.com";
             MessageBox.Show(msg, "About");
-
         }
 
     }
